@@ -11,10 +11,16 @@ public class Tcp {
     private NetworkStream stream;
     private byte[] recieveBuffer;
     private Packet receiveData;
+    private string ip;
+    private int port;
 
-    public void connect(string ip, int port) {
-        socket = new TcpClient();
+    public Tcp(TcpClient socket, string ip, int port) {
+        this.socket = socket;
+        this.port = port;
+        this.ip = ip;
+    }
 
+    public void connect() {
         socket.ReceiveBufferSize = dataBufferSize;
         socket.SendBufferSize = dataBufferSize;
 
@@ -26,28 +32,18 @@ public class Tcp {
     
     private void connectCallback(System.IAsyncResult result) {
         socket.EndConnect(result);
-
         if (!socket.Connected) return;
 
         stream = socket.GetStream();
-
         stream.BeginRead(recieveBuffer, 0, dataBufferSize, receiveCallback, null);
-    }
-
-    public void sendData(Packet packet) {
-        try {
-            if(socket == null) return;
-            stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
-        } catch {
-            Debug.Log("Erro ao enviar msg para o server!");
-        }
     }
 
     private void receiveCallback(System.IAsyncResult result) {
         try {
             int byteLenght = stream.EndRead(result);
+
             if (byteLenght <= 0) {
-                Debug.Log("Desconectar do server");
+                Debug.Log("Disconnecting client tcp...");
                 return;
             }
 
@@ -58,7 +54,7 @@ public class Tcp {
             stream.BeginRead(recieveBuffer, 0, dataBufferSize, receiveCallback, null);
         } catch (System.Exception e) {
             Debug.Log(e);
-            Debug.Log("Desconectar do server");
+            Debug.Log("Disconnecting client tcp...");
         }
     }
 
@@ -78,10 +74,10 @@ public class Tcp {
 
             string msg = packet.ReadString();
             int id = packet.ReadInt();
-            Debug.Log("msg: " + msg + " id: " + id);
+            Debug.Log("Server tcp message: " + msg + " id: " + id);
             
             Client.instance.setId(id);
-            Client.instance.sendMsg("Estou conectado ao servidor!");
+            Client.instance.setTcpConnected(true);
 
             packetLenght = 0;
 
@@ -92,5 +88,14 @@ public class Tcp {
         }
 
         return packetLenght <= 1;
+    }
+
+    public void sendData(Packet packet) {
+        try {
+            if(socket == null) return;
+            stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
+        } catch {
+            Debug.Log("Err. sending tcp to server!");
+        }
     }
 }

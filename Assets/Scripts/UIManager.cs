@@ -18,7 +18,6 @@ public class UIManager : MonoBehaviour {
     }
 
     public void connectToServer() {
-        Debug.Log("Conectando!");
         startMenu.SetActive(false);
         username.interactable = false;
         Client.instance.connectToServer();
