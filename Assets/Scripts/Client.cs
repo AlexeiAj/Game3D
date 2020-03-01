@@ -9,9 +9,12 @@ public class Client : MonoBehaviour {
     private string ip = "127.0.0.1";
     private int port = 8080;
     private int id = 0;
+
     private Tcp tcp;
     private bool tcpConnected = false;
-//     private Udp udp;
+
+    private Udp udp;
+    private bool udpConnected = false;
 
     private void Awake() {
         if (instance != null && instance != this){
@@ -24,9 +27,17 @@ public class Client : MonoBehaviour {
 
     public void connectToServer() {
         Debug.Log("Connecting......");
-        TcpClient socket = new TcpClient();
-        tcp = new Tcp(socket, ip, port); 
+
+        TcpClient socketTcp = new TcpClient();
+        tcp = new Tcp(socketTcp, ip, port); 
         tcp.connect();
+    }
+
+    public void connectToUdp(int localEndPointPort) {
+        UdpClient socketUdp = new UdpClient(localEndPointPort);
+        udp = new Udp(socketUdp, ip, port);
+        udp.connect();
+        sendUdpData("Hello from client UDP.");
     }
 
     private void sendTcpData(string msg) {
@@ -44,25 +55,20 @@ public class Client : MonoBehaviour {
         sendTcpData("I'm connected in the server by TCP!");
     }
 
-//     public void connectUdp() {
-//         udp = new Udp();
-//         udp.connect(ip, port, tcp.getLocalPort());
-//         sendMsgUdp("teste");
-//     }
+    private void sendUdpData(string msg) {
+        Packet packet = new Packet();
+        packet.Write(msg);
+        packet.Write(UIManager.instance.username.text);
+        packet.Write(id);
+        packet.WriteLength();
+        Debug.Log("Sending message to server.. " + msg);
+        udp.sendData(packet);
+    }
 
-//     public void sendMsgUdp(string msg) {
-//         Packet packet = new Packet();
-//         packet.Write(msg);
-//         packet.Write(UIManager.instance.username.text);
-//         packet.Write(id);
-
-//         sendUdpData(packet);
-//     }
-
-//     private void sendUdpData(Packet packet) {
-//         packet.WriteLength();
-//         udp.sendData(packet);
-//     }
+    public void setUdpConnected(bool udpConnected) {
+        this.udpConnected = udpConnected;
+        sendUdpData("I'm connected in the server by UDP!");
+    }
 
     public void setId(int id) {
         this.id = id;

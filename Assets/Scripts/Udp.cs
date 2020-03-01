@@ -1,67 +1,66 @@
-﻿// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEngine;
-// using System.Net;
-// using System.Net.Sockets;
-// using System;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Net;
+using System.Net.Sockets;
+using System;
 
-// public class Udp {
-//     private UdpClient socket;
-//     private IPEndPoint endPoint;
+public class Udp {
+    private IPEndPoint endPoint;
+    private UdpClient socket;
+    private string ip;
+    private int port;
+    private bool firstConnection = true;
 
-//     public void connect(String ip, int port, int localport) {
-//         endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-//         socket = new UdpClient(localport);
+    public Udp(UdpClient socket, string ip, int port) {
+        this.socket = socket;
+        this.port = port;
+        this.ip = ip;
+        this.endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+    }
 
-//         socket.Connect(endPoint);
-//         socket.BeginReceive(receiveCallback, null);
+    public void connect() {
+        socket.Connect(endPoint);
+        socket.BeginReceive(receiveCallback, null);
+    }
 
-//         //iniciar conexao
-//         Packet packet = new Packet();
-//         sendData(packet);
-//     }
+    private void receiveCallback(System.IAsyncResult result) {
+        try {
+            byte[] data = socket.EndReceive(result, ref endPoint);
+            socket.BeginReceive(receiveCallback, null);
+            if(data.Length < 4) {
+                Debug.Log("Disconnecting client udp...");
+                return;
+            }
 
-//     public void sendData(Packet packet) {
-//         Debug.Log("ENVIANDO UDP");
-//         packet.Write(Client.instance.getId());
-//         try {
-//             if(socket == null) return;
-//             socket.BeginSend(packet.ToArray(), packet.Length(), null, null);
-//         } catch {
-//             Debug.Log("Erro ao enviar msg para o server udp!");
-//         }
-//     }
+            handleData(data);
+        } catch (System.Exception e) {
+            Debug.Log(e);
+            Debug.Log("Disconnecting client udp...");
+        }
+    }
 
-//     private void receiveCallback(System.IAsyncResult result) {
-//         try {
-//             byte[] data = socket.EndReceive(result, ref endPoint);
-//             socket.BeginReceive(receiveCallback, null);
+    private void handleData(byte[] data) {
+        Packet packet = new Packet(data);
 
-//             if(data.Length < 4) {
-//                 Debug.Log("Desconectar do server udp");
-//                 return;
-//             }
+        int i = packet.ReadInt(); //só para remover o id do pacote
 
-//             handleData(data);
-//         } catch (System.Exception e) {
-//             Debug.Log(e);
-//             Debug.Log("Desconectar do server udp");
-//         }
-//     }
+        string msg = packet.ReadString();
+        int id = packet.ReadInt();
+        Debug.Log("Server udp message: " + msg + " id: " + id);
 
-//     private void handleData(byte[] data) {
-//         Packet packet = new Packet(data);
-//         int packetLenght =  packet.ReadInt();
-//         data = packet.ReadBytes(packetLenght);
+        if (firstConnection) {
+            Client.instance.setUdpConnected(true);
+            firstConnection = false;
+        }
+    }
 
-//         packet = new Packet(data);
-
-//         string msg = packet.ReadString();
-//         int id = packet.ReadInt();
-//         Debug.Log("msgUDP: " + msg + " id: " + id);
-        
-//         Client.instance.setId(id);
-//         Client.instance.sendMsgUdp("Estou conectado ao servidor UDP!");
-//     }
-
-// }
+    public void sendData(Packet packet) {
+        try {
+            if(socket == null) return;
+            socket.BeginSend(packet.ToArray(), packet.Length(), null, null);
+        } catch {
+            Debug.Log("Err. sending udp to server!");
+        }
+    }
+}

@@ -13,6 +13,7 @@ public class Tcp {
     private Packet receiveData;
     private string ip;
     private int port;
+    private bool firstConnection = true;
 
     public Tcp(TcpClient socket, string ip, int port) {
         this.socket = socket;
@@ -76,8 +77,12 @@ public class Tcp {
             int id = packet.ReadInt();
             Debug.Log("Server tcp message: " + msg + " id: " + id);
             
-            Client.instance.setId(id);
-            Client.instance.setTcpConnected(true);
+            if (firstConnection) {
+                Client.instance.setId(id);
+                Client.instance.setTcpConnected(true);
+                Client.instance.connectToUdp(((IPEndPoint) socket.Client.LocalEndPoint).Port);
+                firstConnection = false;
+            }
 
             packetLenght = 0;
 
