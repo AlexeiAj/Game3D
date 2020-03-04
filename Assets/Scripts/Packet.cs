@@ -8,7 +8,6 @@ public class Packet {
     private List<byte> buffer;
     private byte[] readableBuffer;
     private int readPos;
-    private bool disposed = false;
 
     public Packet() {
         buffer = new List<byte>();
@@ -88,6 +87,19 @@ public class Packet {
     public void Write(string value) {
         Write(value.Length);
         buffer.AddRange(Encoding.ASCII.GetBytes(value));
+    }
+    
+    public void Write(Vector3 value) {
+        Write(value.x);
+        Write(value.y);
+        Write(value.z);
+    }
+
+    public void Write(Quaternion value) {
+        Write(value.x);
+        Write(value.y);
+        Write(value.z);
+        Write(value.w);
     }
 
     public byte ReadByte(bool moveReadPos = true) {
@@ -169,5 +181,13 @@ public class Packet {
         } catch {
             throw new Exception("Could not read value of type 'string'!");
         }
+    }
+
+    public Vector3 ReadVector3(bool moveReadPos = true) {
+        return new Vector3(ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos));
+    }
+
+    public Quaternion ReadQuaternion(bool moveReadPos = true) {
+        return new Quaternion(ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos));
     }
 }

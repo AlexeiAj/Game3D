@@ -10,7 +10,6 @@ public class Udp {
     private UdpClient socket;
     private string ip;
     private int port;
-    private bool firstConnection = true;
 
     public Udp(UdpClient socket, string ip, int port) {
         this.socket = socket;
@@ -45,13 +44,21 @@ public class Udp {
 
         int i = packet.ReadInt(); //só para remover o id do pacote
 
-        string msg = packet.ReadString();
-        int id = packet.ReadInt();
-        Debug.Log("Server udp message: " + msg + " id: " + id);
+        string method = packet.ReadString();
+        
+        if (method.Equals("newConnectionUDP")) {
+            int id = packet.ReadInt();
+            Client.instance.setUdpConnected();
+        }
 
-        if (firstConnection) {
-            Client.instance.setUdpConnected(true);
-            firstConnection = false;
+        if (method.Equals("playerPosition")) {
+            int id = packet.ReadInt();
+            Vector3 position = packet.ReadVector3();
+            Quaternion rotation = packet.ReadQuaternion();
+
+            GameManager.instance.addAction(() => {
+                GameManager.instance.playerPosition(id, position, rotation);
+            });
         }
     }
 

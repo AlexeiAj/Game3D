@@ -13,7 +13,6 @@ public class Tcp {
     private Packet receiveData;
     private string ip;
     private int port;
-    private bool firstConnection = true;
 
     public Tcp(TcpClient socket, string ip, int port) {
         this.socket = socket;
@@ -73,15 +72,22 @@ public class Tcp {
             byte[] packetBytes = receiveData.ReadBytes(packetLenght);
             Packet packet = new Packet(packetBytes);
 
-            string msg = packet.ReadString();
-            int id = packet.ReadInt();
-            Debug.Log("Server tcp message: " + msg + " id: " + id);
-            
-            if (firstConnection) {
-                Client.instance.setId(id);
-                Client.instance.setTcpConnected(true);
+            string method = packet.ReadString();
+
+            if(method.Equals("spawnPlayer")) {
+                int id = packet.ReadInt();
+                Vector3 position = packet.ReadVector3();
+                Quaternion rotation = packet.ReadQuaternion();
+                Client.instance.spawnPlayer(id, position, rotation);
                 Client.instance.connectToUdp(((IPEndPoint) socket.Client.LocalEndPoint).Port);
-                firstConnection = false;
+            }
+
+            if(method.Equals("newConnection")) {
+                int id = packet.ReadInt();
+                string username = packet.ReadString();
+                Vector3 position = packet.ReadVector3();
+                Quaternion rotation = packet.ReadQuaternion();
+                Client.instance.newConnection(id, username, position, rotation);
             }
 
             packetLenght = 0;
