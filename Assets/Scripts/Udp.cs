@@ -56,7 +56,7 @@ public class Udp {
             Vector3 position = packet.ReadVector3();
             Quaternion rotation = packet.ReadQuaternion();
 
-            GameManager.instance.addAction(() => {
+            ThreadManager.ExecuteOnMainThread(() => {
                 GameManager.instance.playerPosition(id, position, rotation);
             });
         }

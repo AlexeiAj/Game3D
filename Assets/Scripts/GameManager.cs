@@ -14,8 +14,6 @@ public class GameManager : MonoBehaviour {
     public GameObject connectCamera;
     private int id;
 
-    private static Stack actions = new Stack();
-
     private void Awake() {
         if (instance != null && instance != this){
             Destroy(this.gameObject);
@@ -23,13 +21,6 @@ public class GameManager : MonoBehaviour {
         }
 
         instance = this;
-    }
-
-    private void Update() {
-        if (actions.Count == 0) return;
-
-        Action action = (Action) actions.Pop();
-        action.Invoke();
     }
 
     public void connectToServer() {
@@ -54,9 +45,4 @@ public class GameManager : MonoBehaviour {
         players[id].transform.position = position;
         if(this.id != id) players[id].transform.rotation = rotation;
     }
-
-    internal void addAction(Action action) {
-        actions.Push(action);
-    }
-
 }

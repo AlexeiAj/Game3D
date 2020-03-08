@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour {
         y = Input.GetAxisRaw("Vertical");
         jumping = Input.GetButton("Jump");
 
-        // Client.instance.sendPlayerKeys(x, y, jumping, transform.rotation);
+        Client.instance.sendPlayerKeys(x, y, jumping, transform.rotation);
     }
 
     private void look(){

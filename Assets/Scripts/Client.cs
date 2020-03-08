@@ -77,7 +77,7 @@ public class Client : MonoBehaviour {
         this.id = id;
         username = GameManager.instance.username.text;
 
-        GameManager.instance.addAction(() => {
+        ThreadManager.ExecuteOnMainThread(() => {
             GameManager.instance.instantiatePlayer(id, username, position, rotation);
         });
 
@@ -89,7 +89,7 @@ public class Client : MonoBehaviour {
     }
 
     public void newConnection(int id, string username, Vector3 position, Quaternion rotation) {
-        GameManager.instance.addAction(() => {
+        ThreadManager.ExecuteOnMainThread(() => {
             GameManager.instance.instantiatePlayerEnemy(id, username, position, rotation);
         });
     }
