@@ -61,14 +61,19 @@ public class Client : MonoBehaviour {
         Debug.Log("Connected by tcp and udp!");
     }
 
-    public void sendPlayerKeys(float x, float y, bool jumping, Quaternion rotation) {
+    public void sendPlayerKeys(float x, float y, float mouseX, float mouseY, bool mouseLeft, bool mouseRight, bool jumping, bool shift, bool e) {
         Packet packet = new Packet();
         packet.Write("playerKeys");
         packet.Write(id);
         packet.Write(x);
         packet.Write(y);
+        packet.Write(mouseX);
+        packet.Write(mouseY);
+        packet.Write(mouseLeft);
+        packet.Write(mouseRight);
         packet.Write(jumping);
-        packet.Write(rotation);
+        packet.Write(shift);
+        packet.Write(e);
         sendUdpData(packet);
     }
 

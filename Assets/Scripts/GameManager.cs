@@ -41,8 +41,9 @@ public class GameManager : MonoBehaviour {
         players.Add(id, playerGO);
     }
 
-    public void playerPosition(int id, Vector3 position, Quaternion rotation) {
+    public void playerPosition(int id, Vector3 position, Quaternion rotation, Quaternion camRotation) {
         players[id].transform.position = position;
-        if(this.id != id) players[id].transform.rotation = rotation;
+        players[id].transform.rotation = rotation;
+        if(this.id == id) players[id].GetComponentInChildren<Camera>().transform.localRotation = camRotation;
     }
 }
