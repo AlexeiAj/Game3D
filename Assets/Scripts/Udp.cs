@@ -43,8 +43,8 @@ public class Udp {
         Packet packet = new Packet(data);
 
         int i = packet.ReadInt(); //só para remover o id do pacote
-
         string method = packet.ReadString();
+        Debug.Log(method);
         
         if (method.Equals("newConnectionUDP")) {
             int id = packet.ReadInt();

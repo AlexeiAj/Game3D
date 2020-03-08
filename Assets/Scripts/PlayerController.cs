@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void Update() {
+    void FixedUpdate() {
         keys();
         look();
     }
@@ -23,7 +23,8 @@ public class PlayerController : MonoBehaviour {
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
         jumping = Input.GetButton("Jump");
-        Client.instance.sendPlayerKeys(x, y, jumping, transform.rotation);
+
+        // Client.instance.sendPlayerKeys(x, y, jumping, transform.rotation);
     }
 
     private void look(){
