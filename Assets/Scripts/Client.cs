@@ -5,9 +5,11 @@ using System.Net;
 using System.Net.Sockets;
 using System;
 using UnityEngine.UI;
+using System.Linq;
 
 public class Client : MonoBehaviour {
     public static Client instance = null;
+    public bool isConnected = false;
     private string ip = "127.0.0.1";
     private int port = 8080;
     private int id;
@@ -35,6 +37,7 @@ public class Client : MonoBehaviour {
     public void connectToServer() {
         Debug.Log("Connecting......");
 
+        isConnected = true;
         TcpClient socketTcp = new TcpClient();
         tcp = new Tcp(socketTcp, ip, port); 
         tcp.connect();
@@ -52,11 +55,13 @@ public class Client : MonoBehaviour {
     }
 
     private void sendTcpData(Packet packet) {
+        if(tcp == null) return;
         packet.WriteLength();
         tcp.sendData(packet);
     }
 
     private void sendUdpData(Packet packet) {
+        if(udp == null) return;
         packet.WriteLength();
         udp.sendData(packet);
     }
@@ -72,6 +77,16 @@ public class Client : MonoBehaviour {
         });
     }
 
+    public void playerDisconnect(Packet packet) {
+        int id = packet.ReadInt();
+
+        GameObject player = getPlayerById(id);
+        if (player != null) ThreadManager.ExecuteOnMainThread(() => Destroy(player));
+        removePlayers(id);
+
+        Debug.Log("Player [id: "+id+"] has disconnect!");
+    }
+
     public void newConnectionUDP(Packet packet) {
         int id = packet.ReadInt();
         Debug.Log("Connected by tcp and udp!");
@@ -82,13 +97,13 @@ public class Client : MonoBehaviour {
         usernameInput.interactable = false;
         Destroy(connectCamera);
         GameObject playerGO = Instantiate(playerPrefab, position, rotation);
-        players.Add(id, playerGO);
+        addPlayers(id, playerGO);
         this.id = id;
     }
 
     public void instantiatePlayerEnemy(int id, string username, Vector3 position, Quaternion rotation) {
         GameObject playerGO = Instantiate(playerEnemyPrefab, position, rotation);
-        players.Add(id, playerGO);
+        addPlayers(id, playerGO);
     }
 
     public void spawnPlayer(Packet packet) {
@@ -124,9 +139,9 @@ public class Client : MonoBehaviour {
     }
 
     public void playerPositionUpdate(int id, Vector3 position, Quaternion rotation, Quaternion camRotation) {
-        players[id].transform.position = position;
-        players[id].transform.rotation = rotation;
-        if(this.id == id) players[id].GetComponentInChildren<Camera>().transform.localRotation = camRotation;
+        getPlayerById(id).transform.position = position;
+        getPlayerById(id).transform.rotation = rotation;
+        if(this.id == id) getPlayerById(id).GetComponentInChildren<Camera>().transform.localRotation = camRotation;
     }
 
     public void sendPlayerKeys(Keys keys) {
@@ -135,5 +150,41 @@ public class Client : MonoBehaviour {
         packet.Write(id);
         packet.Write(keys);
         sendUdpData(packet);
+    }
+
+    public void addPlayers(int id, GameObject player) {
+        players.Add(id, player);
+    }
+
+    public void removePlayers(int id) {
+        players.Remove(id);
+    }
+
+    public List<GameObject> getPlayers() {
+        return players.Select(player => player.Value).ToList();
+    }
+
+    public GameObject getPlayerById(int id) {
+        return players[id];
+    }
+
+    private void OnApplicationQuit() {
+        disconnect();
+    }
+
+    public void disconnect() {
+        if (!isConnected) return;
+        isConnected = false;
+
+        GameObject player = getPlayerById(id);
+        if (player != null) ThreadManager.ExecuteOnMainThread(() => Destroy(player));
+        removePlayers(id);
+        
+        tcp.disconnect();
+        udp.disconnect();
+        tcp= null;
+        udp = null;
+
+        Debug.Log("Disconnected from server!");
     }
 }
