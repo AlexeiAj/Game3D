@@ -268,7 +268,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1124060840}
+      - m_Target: {fileID: 1124060837}
         m_MethodName: connectToServer
         m_Mode: 1
         m_Arguments:
@@ -580,7 +580,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1124060838}
   - component: {fileID: 1124060837}
-  - component: {fileID: 1124060840}
   - component: {fileID: 1124060839}
   m_Layer: 0
   m_Name: Client
@@ -601,6 +600,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62e929b9f64a155428d64fe4ca9e803d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startMenu: {fileID: 1225620106}
+  usernameInput: {fileID: 1960419634}
+  playerPrefab: {fileID: 4929071702788111178, guid: 31764bce5052de449b9c3ddad8cabbf7,
+    type: 3}
+  playerEnemyPrefab: {fileID: 5142872856110638667, guid: fc4bda0b16879ce43a63dbfccd5e9eb2,
+    type: 3}
+  connectCamera: {fileID: 440092020}
 --- !u!4 &1124060838
 Transform:
   m_ObjectHideFlags: 0
@@ -627,25 +633,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b46e4704079fbcb4f8f47b3354e54862, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1124060840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1124060836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dc8581a9d4266c4d8bd2c322aa2dc7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startMenu: {fileID: 1225620106}
-  username: {fileID: 1960419634}
-  playerPrefab: {fileID: 4929071702788111178, guid: 31764bce5052de449b9c3ddad8cabbf7,
-    type: 3}
-  playerEnemyPrefab: {fileID: 5142872856110638667, guid: fc4bda0b16879ce43a63dbfccd5e9eb2,
-    type: 3}
-  connectCamera: {fileID: 440092020}
 --- !u!1 &1161928649
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System;
+using System.Reflection;
 
 public class Tcp {
     private int dataBufferSize = 4096;
@@ -74,22 +75,9 @@ public class Tcp {
 
             string method = packet.ReadString();
 
-            if(method.Equals("spawnPlayer")) {
-                int id = packet.ReadInt();
-                Vector3 position = packet.ReadVector3();
-                Quaternion rotation = packet.ReadQuaternion();
-                Client.instance.spawnPlayer(id, position, rotation);
-                Client.instance.connectToUdp(((IPEndPoint) socket.Client.LocalEndPoint).Port);
-            }
-
-            if(method.Equals("newConnection")) {
-                int id = packet.ReadInt();
-                string username = packet.ReadString();
-                Vector3 position = packet.ReadVector3();
-                Quaternion rotation = packet.ReadQuaternion();
-                Client.instance.newConnection(id, username, position, rotation);
-            }
-
+            MethodInfo theMethod = Client.instance.GetType().GetMethod(method);
+            theMethod.Invoke(Client.instance, new object[]{packet});
+            
             packetLenght = 0;
 
             if (receiveData.UnreadLength() >= 4) {
@@ -99,6 +87,11 @@ public class Tcp {
         }
 
         return packetLenght <= 1;
+    }
+
+
+    public TcpClient getSocket() {
+        return socket;
     }
 
     public void sendData(Packet packet) {

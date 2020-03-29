@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System;
+using System.Reflection;
 
 public class Udp {
     private IPEndPoint endPoint;
@@ -44,23 +45,9 @@ public class Udp {
 
         int i = packet.ReadInt(); //só para remover o id do pacote
         string method = packet.ReadString();
-        Debug.Log(method);
-        
-        if (method.Equals("newConnectionUDP")) {
-            int id = packet.ReadInt();
-            Client.instance.setUdpConnected();
-        }
 
-        if (method.Equals("playerPosition")) {
-            int id = packet.ReadInt();
-            Vector3 position = packet.ReadVector3();
-            Quaternion rotation = packet.ReadQuaternion();
-            Quaternion camRotation = packet.ReadQuaternion();
-
-            ThreadManager.ExecuteOnMainThread(() => {
-                GameManager.instance.playerPosition(id, position, rotation, camRotation);
-            });
-        }
+        MethodInfo theMethod = Client.instance.GetType().GetMethod(method);
+        theMethod.Invoke(Client.instance, new object[]{packet});
     }
 
     public void sendData(Packet packet) {

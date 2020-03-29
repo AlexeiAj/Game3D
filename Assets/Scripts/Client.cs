@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System;
+using UnityEngine.UI;
 
 public class Client : MonoBehaviour {
     public static Client instance = null;
@@ -13,10 +14,14 @@ public class Client : MonoBehaviour {
     private string username;
 
     private Tcp tcp;
-    private bool tcpConnected = false;
-
     private Udp udp;
-    private bool udpConnected = false;
+
+    Dictionary<int, GameObject> players = new Dictionary<int, GameObject>();
+    public GameObject startMenu;
+    public InputField usernameInput;
+    public GameObject playerPrefab;
+    public GameObject playerEnemyPrefab;
+    public GameObject connectCamera;
 
     private void Awake() {
         if (instance != null && instance != this){
@@ -56,54 +61,79 @@ public class Client : MonoBehaviour {
         udp.sendData(packet);
     }
 
-    public void setUdpConnected() {
-        udpConnected = true;
+    public void newConnection(Packet packet) {
+        int id = packet.ReadInt();
+        string username = packet.ReadString();
+        Vector3 position = packet.ReadVector3();
+        Quaternion rotation = packet.ReadQuaternion();
+
+        ThreadManager.ExecuteOnMainThread(() => {
+            Client.instance.instantiatePlayerEnemy(id, username, position, rotation);
+        });
+    }
+
+    public void newConnectionUDP(Packet packet) {
+        int id = packet.ReadInt();
         Debug.Log("Connected by tcp and udp!");
     }
 
-    public void sendPlayerKeys(float x, float y, float mouseX, float mouseY, bool mouseLeft, bool mouseRight, bool jumping, bool shift, bool e) {
+    public void instantiatePlayer(int id, string myUsername, Vector3 position, Quaternion rotation) {
+        startMenu.SetActive(false);
+        usernameInput.interactable = false;
+        Destroy(connectCamera);
+        GameObject playerGO = Instantiate(playerPrefab, position, rotation);
+        players.Add(id, playerGO);
+        this.id = id;
+    }
+
+    public void instantiatePlayerEnemy(int id, string username, Vector3 position, Quaternion rotation) {
+        GameObject playerGO = Instantiate(playerEnemyPrefab, position, rotation);
+        players.Add(id, playerGO);
+    }
+
+    public void spawnPlayer(Packet packet) {
+        int id = packet.ReadInt();
+        Vector3 position = packet.ReadVector3();
+        Quaternion rotation = packet.ReadQuaternion();
+
+        this.id = id;
+        username = usernameInput.text;
+
+        ThreadManager.ExecuteOnMainThread(() => {
+            Client.instance.instantiatePlayer(id, username, position, rotation);
+        });
+
+        Packet packetSend = new Packet();
+        packetSend.Write("newConnection");
+        packetSend.Write(id);
+        packetSend.Write(username);
+        sendTcpData(packetSend);
+
+        connectToUdp(((IPEndPoint) tcp.getSocket().Client.LocalEndPoint).Port);
+    }
+
+    public void playerPosition(Packet packet) {
+        int id = packet.ReadInt();
+        Vector3 position = packet.ReadVector3();
+        Quaternion rotation = packet.ReadQuaternion();
+        Quaternion camRotation = packet.ReadQuaternion();
+
+        ThreadManager.ExecuteOnMainThread(() => {
+            Client.instance.playerPositionUpdate(id, position, rotation, camRotation);
+        });
+    }
+
+    public void playerPositionUpdate(int id, Vector3 position, Quaternion rotation, Quaternion camRotation) {
+        players[id].transform.position = position;
+        players[id].transform.rotation = rotation;
+        if(this.id == id) players[id].GetComponentInChildren<Camera>().transform.localRotation = camRotation;
+    }
+
+    public void sendPlayerKeys(Keys keys) {
         Packet packet = new Packet();
         packet.Write("playerKeys");
         packet.Write(id);
-        packet.Write(x);
-        packet.Write(y);
-        packet.Write(mouseX);
-        packet.Write(mouseY);
-        packet.Write(mouseLeft);
-        packet.Write(mouseRight);
-        packet.Write(jumping);
-        packet.Write(shift);
-        packet.Write(e);
+        packet.Write(keys);
         sendUdpData(packet);
-    }
-
-    public void spawnPlayer(int id, Vector3 position, Quaternion rotation) {
-        tcpConnected = true;
-        this.id = id;
-        username = GameManager.instance.username.text;
-
-        ThreadManager.ExecuteOnMainThread(() => {
-            GameManager.instance.instantiatePlayer(id, username, position, rotation);
-        });
-
-        Packet packet = new Packet();
-        packet.Write("newConnection");
-        packet.Write(id);
-        packet.Write(username);
-        sendTcpData(packet);
-    }
-
-    public void newConnection(int id, string username, Vector3 position, Quaternion rotation) {
-        ThreadManager.ExecuteOnMainThread(() => {
-            GameManager.instance.instantiatePlayerEnemy(id, username, position, rotation);
-        });
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
     }
 }
