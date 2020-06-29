@@ -29,14 +29,14 @@ public class Udp {
             byte[] data = socket.EndReceive(result, ref endPoint);
             socket.BeginReceive(receiveCallback, null);
             if(data.Length < 4) {
-                // Debug.Log("Err. receiving udp data! Disconnecting client udp...");
+                Debug.Log("Err. receiving udp data! Disconnecting client udp... \n DATA LENGHT < 4");
                 Client.instance.disconnect();
                 return;
             }
 
             handleData(data);
         } catch (System.Exception e) {
-            // Debug.Log("Err. receiving udp data! Disconnecting client udp...");
+            Debug.Log("Err. receiving udp data! Disconnecting client udp... \n"+e);
             Client.instance.disconnect();
         }
     }
