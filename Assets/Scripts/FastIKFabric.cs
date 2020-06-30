@@ -48,6 +48,7 @@ namespace DitzelGames.FastIK
         protected Quaternion StartRotationTarget;
         protected Transform Root;
 
+        public bool left = false;
 
         // Start is called before the first frame update
         void Awake()
@@ -114,6 +115,8 @@ namespace DitzelGames.FastIK
         void LateUpdate()
         {
             ResolveIK();
+            if(left) transform.Rotate(180, -45, -90, Space.Self);
+            else transform.Rotate(-180, 45, 90, Space.Self);
         }
 
         private void ResolveIK()

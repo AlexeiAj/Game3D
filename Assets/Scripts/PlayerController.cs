@@ -18,6 +18,12 @@ public class PlayerController : MonoBehaviour {
     private bool readyToJump = true;
     private float jumpDelay = 0.6f;
 
+    public ParticleSystem shootPS;
+    private float fireRate = 2f;
+    private float nextTimeToFire = 0f;
+
+    private Quaternion camRotation;
+
     void Start() {
         Cursor.lockState = CursorLockMode.Locked;
         keys = new Keys();
@@ -26,8 +32,20 @@ public class PlayerController : MonoBehaviour {
     void FixedUpdate() {
         running();
         jump();
+        shoot();
 
         if(!enemy) sendKeys();
+    }
+    
+    void LateUpdate() {
+        head.transform.localRotation = camRotation;
+    }
+
+    private void shoot() {
+        if(keys.mouseLeft && Time.time >= nextTimeToFire) {
+            nextTimeToFire = Time.time + 2f / fireRate;
+            shootPS.Play();
+        }
     }
 
     private void running() {
@@ -68,7 +86,7 @@ public class PlayerController : MonoBehaviour {
     public void playerPosition(Packet packet) {
         Vector3 position = packet.ReadVector3();
         Quaternion rotation = packet.ReadQuaternion();
-        Quaternion camRotation = packet.ReadQuaternion();
+        camRotation = packet.ReadQuaternion();
         isGrounded = packet.ReadBool();
         if(enemy) keys = packet.ReadKeys();
 
@@ -83,7 +101,6 @@ public class PlayerController : MonoBehaviour {
         player.transform.position = position;
         player.transform.rotation = rotation;
         playerCam.transform.localRotation = camRotation;
-        head.transform.localRotation = camRotation;
     }
 
     public void removePlayer() {

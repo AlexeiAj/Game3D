@@ -9,6 +9,7 @@ public class MenuController : MonoBehaviour {
     public GameObject startMenu;
     public InputField usernameInput;
     public GameObject connectCamera;
+    public GameObject crosshair;
 
     private void Awake() {
         if (instance != null && instance != this){
@@ -32,6 +33,7 @@ public class MenuController : MonoBehaviour {
     public void removeMenu() {
         startMenu.SetActive(false);
         usernameInput.interactable = false;
+        crosshair.SetActive(true);
         Destroy(connectCamera);
     }
 
