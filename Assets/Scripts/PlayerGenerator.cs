@@ -58,6 +58,6 @@ public class PlayerGenerator : MonoBehaviour {
         playerController.setId(id);
         playerController.setUsername(username);
         Client.instance.addPlayers(id, playerController);
-        Debug.Log("Player [id: "+id+" username: "+username+"] has connect!");
+        MenuController.instance.setLog("Player [id: "+id+" username: "+username+"] has connect!");
     }
 }

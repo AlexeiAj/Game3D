@@ -42,7 +42,7 @@ public class Client : MonoBehaviour {
     public void connectByTcpFS(Packet packet) {
         int id = packet.ReadInt();
         setMyId(id);
-        Debug.Log("Connected by tcp!");
+        MenuController.instance.setLog("Connected by tcp!");
 
         connectToUdp();
     }
@@ -60,7 +60,7 @@ public class Client : MonoBehaviour {
 
     public void connectByUdpFS(Packet packet) {
         int id = packet.ReadInt();
-        Debug.Log("Connected by udp!");
+        MenuController.instance.setLog("Connected by udp!");
 
         requestSpawnPlayer();
     }
@@ -75,6 +75,7 @@ public class Client : MonoBehaviour {
 
     public void requestSpawnPlayerFS(Packet packet) {
         PlayerGenerator.instance.newPlayer(packet, username);
+        MapGenerator.instance.newMap();
     }
 
     public void newEnemyFS(Packet packet) {
@@ -89,8 +90,17 @@ public class Client : MonoBehaviour {
         player.playerPosition(packet);
     }
 
+    public void shootImpactLocationFS(Packet packet) {
+        int id = packet.ReadInt();
+        PlayerController player = getPlayerById(id);
+        if(player == null) return;
+
+        player.creatShootImpact(packet);
+    }
+
     public void playerDisconnect(Packet packet) {
         int id = packet.ReadInt();
+        
         PlayerController player = getPlayerById(id);
         if(player == null) return;
 
@@ -112,7 +122,7 @@ public class Client : MonoBehaviour {
         tcp = null;
         udp = null;
 
-        Debug.Log("Disconnected from server!");
+        MenuController.instance.setLog("Disconnected from server!");
     }
 
     public void sendTcpData(Packet packet) {

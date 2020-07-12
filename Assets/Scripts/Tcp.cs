@@ -27,7 +27,7 @@ public class Tcp {
 
         receiveData = new Packet();
         recieveBuffer = new byte[dataBufferSize];
-
+        
         socket.BeginConnect(ip, port, connectCallback, socket);
     }
     
@@ -44,7 +44,7 @@ public class Tcp {
             int byteLenght = stream.EndRead(result);
 
             if (byteLenght <= 0) {
-                Debug.Log("Disconnecting client tcp... \n DATA LENGHT < 4");
+                MenuController.instance.setLog("Disconnecting client tcp... \n DATA LENGHT < 4");
                 Client.instance.disconnect();
                 return;
             }
@@ -55,7 +55,7 @@ public class Tcp {
 
             stream.BeginRead(recieveBuffer, 0, dataBufferSize, receiveCallback, null);
         } catch (System.Exception e) {
-            Debug.Log("Disconnecting client tcp... \n"+e);
+            MenuController.instance.setLog("Disconnecting client tcp... \n"+e);
             Client.instance.disconnect();
         }
     }
@@ -100,7 +100,7 @@ public class Tcp {
             if(socket == null) return;
             stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
         } catch {
-            Debug.Log("Err. sending tcp to server!");
+            MenuController.instance.setLog("Err. sending tcp to server!");
         }
     }
 

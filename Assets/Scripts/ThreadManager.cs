@@ -13,7 +13,7 @@ public class ThreadManager : MonoBehaviour {
 
     public static void ExecuteOnMainThread(Action _action) {
         if (_action == null) {
-            Debug.Log("No action to execute on main thread!");
+            MenuController.instance.setLog("No action to execute on main thread!");
             return;
         }
 
