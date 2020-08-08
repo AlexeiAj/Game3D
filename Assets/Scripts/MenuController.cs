@@ -21,13 +21,6 @@ public class MenuController : MonoBehaviour {
     //Log UI
     public Text log;
 
-    //Mobile UI
-    public GameObject mobileInputUI;
-    public Joystick joystickLeft;
-    public Joystick joystickRight;
-    private bool jump;
-    private bool fire;
-
     private void Awake() {
         if (instance != null && instance != this){
             Destroy(this.gameObject);
@@ -52,11 +45,6 @@ public class MenuController : MonoBehaviour {
     public void removeMenu() {
         hideStartMenuUI();
         showGameUI();
-        showMobileInputUI();
-    }
-
-    public void showMobileInputUI() {
-        if (isAndroid()) mobileInputUI.SetActive(true);
     }
 
     public void showGameUI() {
@@ -68,30 +56,6 @@ public class MenuController : MonoBehaviour {
         ipInput.interactable = false;
         usernameInput.interactable = false;
         Destroy(connectCamera);
-    }
-
-    public bool isAndroid() {
-        return Application.platform == RuntimePlatform.Android;
-    }
-
-    public Joystick getJoystickLeft() {
-        return joystickLeft;
-    }
-
-    public Joystick getJoystickRight() {
-        return joystickRight;
-    }
-
-    public void setJump(bool jump) {
-        this.jump = jump;
-    }
-
-    public bool getJump() {
-        return jump;
-    }
-
-    public void setFire(bool fire) {
-        this.fire = fire;
     }
 
     public void setLog(string text) {
@@ -115,10 +79,6 @@ public class MenuController : MonoBehaviour {
 
     public void clearLog() {
         log.text = "";
-    }
-
-    public bool getFire() {
-        return fire;
     }
 
     public void quitGame(){

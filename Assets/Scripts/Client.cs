@@ -98,6 +98,22 @@ public class Client : MonoBehaviour {
         player.creatShootImpact(packet);
     }
 
+    public void killPlayerFS(Packet packet) {
+        int id = packet.ReadInt();
+        PlayerController player = getPlayerById(id);
+        if(player == null) return;
+
+        ThreadManager.ExecuteOnMainThread(() => { player.killPlayer(packet);});
+    }
+
+    public void respawnPlayerFS(Packet packet) {
+        int id = packet.ReadInt();
+        PlayerController player = getPlayerById(id);
+        if(player == null) return;
+
+        ThreadManager.ExecuteOnMainThread(() => { player.respawnPlayer(packet);});
+    }
+
     public void playerDisconnect(Packet packet) {
         int id = packet.ReadInt();
         

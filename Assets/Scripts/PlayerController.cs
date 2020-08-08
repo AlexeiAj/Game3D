@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     
+    public GameObject playerModel;
+    public GameObject playerGun;
     public GameObject player;
     public Camera playerCam;
     public Transform head;
@@ -13,6 +15,7 @@ public class PlayerController : MonoBehaviour {
     public int id = -1;
     public bool enemy;
 
+    private bool alive = true;
     private bool isGrounded;
     private bool readyToJump = true;
     private float jumpDelay = 0.6f;
@@ -35,22 +38,24 @@ public class PlayerController : MonoBehaviour {
     public float block = 100f;
 
     void Start() {
-        if(!MenuController.instance.isAndroid()) Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked;
         keys = new Keys();
     }
 
     void FixedUpdate() {
-        running();
-        jump();
-        dash();
-        shoot();
-        
-        if(!enemy) updateHelth();
-        if(!enemy) sendKeys();
+        if(alive) {
+            running();
+            jump();
+            dash();
+            shoot();
+            
+            if(!enemy) updateHelth();
+            if(!enemy) sendKeys();
+        }
     }
     
     void LateUpdate() {
-        head.transform.localRotation = camRotation;
+        if(alive) head.transform.localRotation = camRotation;
     }
 
     private void updateHelth() {
@@ -62,6 +67,14 @@ public class PlayerController : MonoBehaviour {
         if(keys.mouseLeft && Time.time >= nextTimeToFire) {
             nextTimeToFire = Time.time + 2f / fireRate;
             shootPS.Play();
+            shootPS.Play();
+            shootPS.Play();
+            shootPS.Play();
+            shootPS.Play();
+            shootPS.Play();
+            SoundManager.PlaySound("shoot");
+            if(shootPS) Debug.Log("shootaaaaa");
+            Debug.Log("shoot");
         }
     }
 
@@ -83,6 +96,7 @@ public class PlayerController : MonoBehaviour {
         if(isGrounded && animations.GetBool("Jumping") && readyToJump){
             animations.SetBool("Jumping", false);
             Destroy(Instantiate(landPS, new Vector3(player.transform.position.x, player.transform.position.y-1, player.transform.position.z), Quaternion.identity), 1);
+            SoundManager.PlaySound("land");
         }
 
         if(!isGrounded && !animations.GetBool("Jumping") && !animations.GetBool("Running")) {
@@ -92,6 +106,7 @@ public class PlayerController : MonoBehaviour {
         if(keys.jumping && isGrounded && readyToJump && !animations.GetBool("Jumping")){
             animations.SetBool("Jumping", true);
             Destroy(Instantiate(jumpPS, new Vector3(player.transform.position.x, player.transform.position.y-1, player.transform.position.z), Quaternion.identity), 1);
+            SoundManager.PlaySound("jump");
             Invoke("restartJump", jumpDelay);
             readyToJump = false;
         }
@@ -105,10 +120,12 @@ public class PlayerController : MonoBehaviour {
                 dashGO.transform.localPosition = new Vector3(0, 0, keys.y * 1.2f);
                 dashGO.transform.localRotation = Quaternion.Euler(0, keys.y >= 0 ? 180 : 0, 0);
                 dashPS.Play();
+                SoundManager.PlaySound("dash");
             } else if (keys.x != 0) {
                 dashGO.transform.localPosition = new Vector3(keys.x * 1.2f, 0, 0);
                 dashGO.transform.localRotation = Quaternion.Euler(0, keys.x * -90, 0);
                 dashPS.Play();
+                SoundManager.PlaySound("dash");
             }
 
             Invoke("resetFinishDashDelay", dashDelay);
@@ -170,8 +187,22 @@ public class PlayerController : MonoBehaviour {
         ThreadManager.ExecuteOnMainThread(() => {
             Vector3 hitPoint = packet.ReadVector3();
             Quaternion rotationPoint = packet.ReadQuaternion();
+            bool isPlayer = packet.ReadBool();
             Destroy(Instantiate(impactPS, hitPoint, rotationPoint), 1);
+            if(isPlayer) SoundManager.PlaySound("hit");
         });
+    }
+
+    public void killPlayer(Packet packet) {
+        alive = false;
+        playerModel.SetActive(false);
+        playerGun.SetActive(false);
+    }
+
+    public void respawnPlayer(Packet packet) {
+        alive = true;
+        playerModel.SetActive(true);
+        playerGun.SetActive(true);
     }
 
     public void setId(int id) {

@@ -27,7 +27,7 @@ public class Tcp {
 
         receiveData = new Packet();
         recieveBuffer = new byte[dataBufferSize];
-        
+
         socket.BeginConnect(ip, port, connectCallback, socket);
     }
     
