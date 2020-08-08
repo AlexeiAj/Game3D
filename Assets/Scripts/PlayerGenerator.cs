@@ -4,7 +4,6 @@ public class PlayerGenerator : MonoBehaviour {
     public static PlayerGenerator instance = null;
 
     public GameObject playerPrefab;
-    public GameObject playerEnemyPrefab;
 
     private void Awake() {
         if (instance != null && instance != this){
@@ -53,10 +52,11 @@ public class PlayerGenerator : MonoBehaviour {
     }
 
     public void instantiatePlayerEnemy(int id, string username, Vector3 position, Quaternion rotation) {
-        GameObject playerGO = Instantiate(playerEnemyPrefab, position, rotation);
+        GameObject playerGO = Instantiate(playerPrefab, position, rotation);
         PlayerController playerController = playerGO.GetComponentInChildren<PlayerController>();
         playerController.setId(id);
         playerController.setUsername(username);
+        playerController.makeIdEnemy();
         Client.instance.addPlayers(id, playerController);
         MenuController.instance.setLog("Player [id: "+id+" username: "+username+"] has connect!");
     }

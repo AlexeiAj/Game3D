@@ -648,7 +648,6 @@ MonoBehaviour:
   animations: {fileID: 7656655601671983951}
   username: 
   id: -1
-  enemy: 0
   shootPS: {fileID: 8073938586141959564}
   dashPS: {fileID: 5513246477431026353}
   dashGO: {fileID: 6391027907767452187}
@@ -843,7 +842,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4502783530282307503}
   - component: {fileID: 4502783530282307497}
-  - component: {fileID: 4502783530282307502}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -897,7 +895,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 309
+    m_Bits: 1333
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -909,14 +907,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &4502783530282307502
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4502783530282307500}
-  m_Enabled: 1
 --- !u!1 &4538162532251742021
 GameObject:
   m_ObjectHideFlags: 0

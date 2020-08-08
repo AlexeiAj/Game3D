@@ -519,7 +519,6 @@ GameObject:
   m_Component:
   - component: {fileID: 440092023}
   - component: {fileID: 440092022}
-  - component: {fileID: 440092021}
   m_Layer: 5
   m_Name: Camera
   m_TagString: Untagged
@@ -527,14 +526,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &440092021
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 440092020}
-  m_Enabled: 1
 --- !u!20 &440092022
 Camera:
   m_ObjectHideFlags: 0
@@ -1005,6 +996,7 @@ GameObject:
   - component: {fileID: 1124060840}
   - component: {fileID: 1124060842}
   - component: {fileID: 1124060844}
+  - component: {fileID: 1124060845}
   - component: {fileID: 1124060843}
   m_Layer: 0
   m_Name: Client
@@ -1038,7 +1030,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1124060839
 MonoBehaviour:
@@ -1065,8 +1057,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 3962149115371351206, guid: fa04cf69a0b47594180506a524d6cc31,
-    type: 3}
-  playerEnemyPrefab: {fileID: 3962149115371351206, guid: d8ddee56d67f54746b2a51b9d0d698d5,
     type: 3}
 --- !u!114 &1124060841
 MonoBehaviour:
@@ -1210,6 +1200,14 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!81 &1124060845
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124060836}
+  m_Enabled: 1
 --- !u!1 &1161928649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1653,7 +1651,7 @@ RectTransform:
   - {fileID: 1885629580}
   - {fileID: 166926657}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

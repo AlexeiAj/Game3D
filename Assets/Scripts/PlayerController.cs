@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour {
     public Keys keys { get; set; }
     public string username = "";
     public int id = -1;
-    public bool enemy;
+    public bool enemy = false;
 
     private bool alive = true;
     private bool isGrounded;
@@ -73,8 +73,6 @@ public class PlayerController : MonoBehaviour {
             shootPS.Play();
             shootPS.Play();
             SoundManager.PlaySound("shoot");
-            if(shootPS) Debug.Log("shootaaaaa");
-            Debug.Log("shoot");
         }
     }
 
@@ -211,5 +209,22 @@ public class PlayerController : MonoBehaviour {
 
     public void setUsername(string username) {
         this.username = username;
+    }
+
+    public void makeIdEnemy() {
+        enemy = true;
+        playerCam.enabled = false;
+        setLayerRecursively(playerModel, LayerMask.NameToLayer("Enemy"));
+    }
+
+    private void setLayerRecursively(GameObject obj, LayerMask newLayer) {
+        if(null == obj) return;
+       
+        obj.layer = newLayer;
+       
+        foreach(Transform child in obj.transform) {
+            if (null == child) continue;
+            setLayerRecursively(child.gameObject, newLayer);
+        }
     }
 }
