@@ -75,6 +75,7 @@ public class Client : MonoBehaviour {
 
     public void requestSpawnPlayerFS(Packet packet) {
         PlayerGenerator.instance.newPlayer(packet, username);
+        //passar v3 do map aq
         MapGenerator.instance.newMap();
     }
 

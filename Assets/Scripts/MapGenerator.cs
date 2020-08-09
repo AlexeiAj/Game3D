@@ -21,6 +21,6 @@ public class MapGenerator : MonoBehaviour {
     }
 
     public void createMap() {
-        Instantiate(map1Prefab, new Vector3(-2.315202f,-1.984119f,-9.144831f), Quaternion.identity);
+        Instantiate(map1Prefab, new Vector3(-0.5236155f,-0.09689212f,-10.69109f), Quaternion.identity);
     }
 }

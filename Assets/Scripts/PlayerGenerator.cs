@@ -56,7 +56,7 @@ public class PlayerGenerator : MonoBehaviour {
         PlayerController playerController = playerGO.GetComponentInChildren<PlayerController>();
         playerController.setId(id);
         playerController.setUsername(username);
-        playerController.makeIdEnemy();
+        playerController.makeItEnemy();
         Client.instance.addPlayers(id, playerController);
         MenuController.instance.setLog("Player [id: "+id+" username: "+username+"] has connect!");
     }

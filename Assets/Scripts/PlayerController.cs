@@ -5,12 +5,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
     
     public GameObject playerModel;
-    public GameObject playerGun;
+    public Weapon playerGun;
     public GameObject player;
     public Camera playerCam;
     public Transform head;
     public Animator animations;
     public Keys keys { get; set; }
+    public TextMesh displayName;
     public string username = "";
     public int id = -1;
     public bool enemy = false;
@@ -22,7 +23,6 @@ public class PlayerController : MonoBehaviour {
     private bool finishDashDelay = true;
     private float dashDelay = 0.8f;
 
-    public ParticleSystem shootPS;
     public ParticleSystem dashPS;
     public GameObject dashGO;
     public GameObject impactPS;
@@ -52,6 +52,9 @@ public class PlayerController : MonoBehaviour {
             if(!enemy) updateHelth();
             if(!enemy) sendKeys();
         }
+
+        displayName.transform.LookAt(Camera.main.transform);
+        displayName.transform.Rotate(0, 180, 0);
     }
     
     void LateUpdate() {
@@ -66,12 +69,7 @@ public class PlayerController : MonoBehaviour {
     private void shoot() {
         if(keys.mouseLeft && Time.time >= nextTimeToFire) {
             nextTimeToFire = Time.time + 2f / fireRate;
-            shootPS.Play();
-            shootPS.Play();
-            shootPS.Play();
-            shootPS.Play();
-            shootPS.Play();
-            shootPS.Play();
+            playerGun.shoot();
             SoundManager.PlaySound("shoot");
         }
     }
@@ -194,13 +192,13 @@ public class PlayerController : MonoBehaviour {
     public void killPlayer(Packet packet) {
         alive = false;
         playerModel.SetActive(false);
-        playerGun.SetActive(false);
+        playerGun.setVisible(false);
     }
 
     public void respawnPlayer(Packet packet) {
         alive = true;
         playerModel.SetActive(true);
-        playerGun.SetActive(true);
+        playerGun.setVisible(true);
     }
 
     public void setId(int id) {
@@ -211,9 +209,11 @@ public class PlayerController : MonoBehaviour {
         this.username = username;
     }
 
-    public void makeIdEnemy() {
+    public void makeItEnemy() {
         enemy = true;
         playerCam.enabled = false;
+        playerCam.tag = "Enemy";
+        displayName.text = username;
         setLayerRecursively(playerModel, LayerMask.NameToLayer("Enemy"));
     }
 
