@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour {
     public ParticleSystem dashPS;
     public GameObject dashGO;
     public GameObject impactPS;
+    public GameObject bloodPS;
     public GameObject jumpPS;
     public GameObject landPS;
 
@@ -185,7 +186,11 @@ public class PlayerController : MonoBehaviour {
             Quaternion rotationPoint = packet.ReadQuaternion();
             bool isPlayer = packet.ReadBool();
             Destroy(Instantiate(impactPS, hitPoint, rotationPoint), 1);
-            if(isPlayer) SoundManager.PlaySound("hit");
+            if(isPlayer) {
+                Destroy(Instantiate(bloodPS, hitPoint, rotationPoint), 1);
+                SoundManager.PlaySound("hit");
+                if(enemy) MenuController.instance.enableDamage();
+            }
         });
     }
 

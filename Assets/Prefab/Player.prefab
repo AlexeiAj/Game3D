@@ -746,7 +746,8 @@ MonoBehaviour:
   dashGO: {fileID: 6391027907767452187}
   impactPS: {fileID: 5438743009235333443, guid: 6644e41d84e02d046b53fc684b53e0ff,
     type: 3}
-  jumpPS: {fileID: 5393381353810953622, guid: 5636a4dacf0f39f43b2deb95ad819239, type: 3}
+  bloodPS: {fileID: 1138700962958165375, guid: 1ef8713172bd35341884356d6cb51dfe, type: 3}
+  jumpPS: {fileID: 5393381353810953622, guid: 549c42efcfaa0094dafafc994c8c2f99, type: 3}
   landPS: {fileID: 1138700962958165375, guid: c202f675a64344b4882c186a87920d3c, type: 3}
   health: 100
   block: 100

@@ -15,6 +15,7 @@ public class MenuController : MonoBehaviour {
 
     //Game UI
     public GameObject gameMenuUI;
+    public GameObject damage;
     public Text health;
     public Text block;
 
@@ -87,5 +88,14 @@ public class MenuController : MonoBehaviour {
 
     private void OnApplicationQuit() {
         Client.instance.disconnect();
+    }
+
+    public void enableDamage() {
+        damage.SetActive(true);
+        Invoke("disableDamage", 0.3f);
+    }
+
+    private void disableDamage() {
+        damage.SetActive(false);
     }
 }
