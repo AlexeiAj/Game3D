@@ -28,7 +28,11 @@ public class Client : MonoBehaviour {
         instance = this;
     }
 
-    public void connectToServer() {
+    public void connectToServer(string ipText, int port, string usernameInput) {
+        this.username = usernameInput;
+        this.port = port;
+        this.ip = ipText;
+
         isConnected = true;
         connectToTcp();
     }
@@ -41,8 +45,7 @@ public class Client : MonoBehaviour {
 
     public void connectByTcpFS(Packet packet) {
         int id = packet.ReadInt();
-        setMyId(id);
-        MenuController.instance.setLog("Connected by tcp!");
+        this.id = id;
 
         connectToUdp();
     }
@@ -60,7 +63,6 @@ public class Client : MonoBehaviour {
 
     public void connectByUdpFS(Packet packet) {
         int id = packet.ReadInt();
-        MenuController.instance.setLog("Connected by udp!");
 
         requestSpawnPlayer();
     }
@@ -152,22 +154,6 @@ public class Client : MonoBehaviour {
         if(udp == null) return;
         packet.WriteLength();
         udp.sendData(packet);
-    }
-
-    public void setMyId(int id) {
-        this.id = id;
-    }
-
-    public void setMyUsername(string username) {
-        this.username = username;
-    }
-
-    public void setMyPort(int port) {
-        this.port = port;
-    }
-
-    public void setMyIp(string ip) {
-        this.ip = ip;
     }
 
     public void addPlayers(int id, PlayerController player) {

@@ -1,6 +1,7 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Text.RegularExpressions;
 
 public class MenuController : MonoBehaviour {
     public static MenuController instance = null;
@@ -12,6 +13,8 @@ public class MenuController : MonoBehaviour {
     public InputField usernameInput;
     public InputField ipInput;
     public GameObject connectCamera;
+    public Button startButton;
+    public GameObject connectingText;
 
     //Game UI
     public GameObject gameMenuUI;
@@ -32,15 +35,18 @@ public class MenuController : MonoBehaviour {
     }
 
     public void connectToServer() {
-        setLog("Connecting......");
-
         if (Application.isEditor) ipInput.text = "127.0.0.1";
 
-        Client.instance.setMyIp(ipInput.text);
-        Client.instance.setMyPort(port);
-        Client.instance.setMyUsername(usernameInput.text);
+        if (!Regex.Match(ipInput.text, @"^\d{3}\.\d{1,3}\.\d{1,3}\.\d{1,3}").Success) {
+            setLog("Ip doesn't match the format!");
+            setInteractableStart(true);
+            ipInput.text = "";
+            return;
+        }
 
-        Client.instance.connectToServer();
+        setInteractableStart(false);
+
+        Client.instance.connectToServer(ipInput.text, port, usernameInput.text);
     }
 
     public void removeMenu() {
@@ -57,6 +63,22 @@ public class MenuController : MonoBehaviour {
         ipInput.interactable = false;
         usernameInput.interactable = false;
         Destroy(connectCamera);
+    }
+
+    public void setInteractableStart(bool interactable){
+        if (interactable){
+            ThreadManager.ExecuteOnMainThread(() => {
+                Invoke("enableInteractable", 1);
+            });
+        } else {
+            startButton.interactable = false;
+            connectingText.SetActive(true);
+        } 
+    }
+
+    public void enableInteractable() {
+        startButton.interactable = true;
+        connectingText.SetActive(false);
     }
 
     public void setLog(string text) {

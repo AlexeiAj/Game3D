@@ -8,6 +8,7 @@ using System.Reflection;
 
 public class Tcp {
     private int dataBufferSize = 4096;
+    private int retryCount = 0;
     private TcpClient socket;
     private NetworkStream stream;
     private byte[] recieveBuffer;
@@ -28,15 +29,28 @@ public class Tcp {
         receiveData = new Packet();
         recieveBuffer = new byte[dataBufferSize];
 
+        retryCount = 0;
         socket.BeginConnect(ip, port, connectCallback, socket);
     }
     
     private void connectCallback(System.IAsyncResult result) {
-        socket.EndConnect(result);
-        if (!socket.Connected) return;
+        try {
+            socket.EndConnect(result);
+            if (!socket.Connected) return;
 
-        stream = socket.GetStream();
-        stream.BeginRead(recieveBuffer, 0, dataBufferSize, receiveCallback, null);
+            stream = socket.GetStream();
+            stream.BeginRead(recieveBuffer, 0, dataBufferSize, receiveCallback, null);
+        } catch (System.Exception e) {
+            if (retryCount > 0) {
+                retryCount--;
+                Debug.Log(e);
+                MenuController.instance.setLog("Connection failed. Retrying...");
+                socket.BeginConnect(ip, port, new AsyncCallback(connectCallback), socket);
+            } else {
+                MenuController.instance.setLog("Can't connect to server.");
+                MenuController.instance.setInteractableStart(true);
+            }
+        }
     }
 
     private void receiveCallback(System.IAsyncResult result) {
@@ -55,7 +69,8 @@ public class Tcp {
 
             stream.BeginRead(recieveBuffer, 0, dataBufferSize, receiveCallback, null);
         } catch (System.Exception e) {
-            MenuController.instance.setLog("Disconnecting client tcp... \n"+e);
+            Debug.Log(e);
+            MenuController.instance.setLog("Disconnecting client tcp...");
             Client.instance.disconnect();
         }
     }

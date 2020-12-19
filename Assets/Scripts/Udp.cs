@@ -36,7 +36,8 @@ public class Udp {
 
             handleData(data);
         } catch (System.Exception e) {
-            MenuController.instance.setLog("Err. receiving udp data! Disconnecting client udp... \n"+e);
+            Debug.Log(e);
+            MenuController.instance.setLog("Err. receiving udp data! Disconnecting client udp...");
             Client.instance.disconnect();
         }
     }
