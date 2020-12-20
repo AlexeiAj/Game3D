@@ -63,8 +63,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void updateHelth() {
-        MenuController.instance.setHealth(health);
-        MenuController.instance.setBlock(block);
+        GameController.instance.setHealth(health);
+        GameController.instance.setBlock(block);
     }
 
     private void shoot() {
@@ -175,7 +175,7 @@ public class PlayerController : MonoBehaviour {
     public void removePlayer() {
         ThreadManager.ExecuteOnMainThread(() => {
             Client.instance.removeFromPlayers(id);
-            MenuController.instance.setLog("Player [id: "+id+"] has disconnect!");
+            GameController.instance.setLog("Player [id: "+id+"] has disconnect!");
             Destroy(player);
         });
     }
@@ -189,7 +189,7 @@ public class PlayerController : MonoBehaviour {
             if(isPlayer) {
                 Destroy(Instantiate(bloodPS, hitPoint, rotationPoint), 1);
                 SoundManager.PlaySound("hit");
-                if(enemy) MenuController.instance.enableDamage();
+                if(enemy) GameController.instance.enableDamage();
             }
         });
     }

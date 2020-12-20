@@ -31,8 +31,6 @@ public class PlayerGenerator : MonoBehaviour {
     }
 
     public void instantiatePlayer(int id, string myUsername, Vector3 position, Quaternion rotation) {
-        MenuController.instance.removeMenu();
-
         GameObject playerGO = Instantiate(playerPrefab, position, rotation);
         PlayerController playerController = playerGO.GetComponentInChildren<PlayerController>();
         playerController.setId(id);

@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class Client : MonoBehaviour {
     public static Client instance = null;
@@ -26,6 +27,7 @@ public class Client : MonoBehaviour {
         }
 
         instance = this;
+        DontDestroyOnLoad(instance);
     }
 
     public void connectToServer(string ipText, int port, string usernameInput) {
@@ -64,6 +66,7 @@ public class Client : MonoBehaviour {
     public void connectByUdpFS(Packet packet) {
         int id = packet.ReadInt();
 
+        ThreadManager.ExecuteOnMainThread(() => { SceneManager.LoadScene("Mapa1");});
         requestSpawnPlayer();
     }
 

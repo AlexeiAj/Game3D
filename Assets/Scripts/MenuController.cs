@@ -1,6 +1,5 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
-using UnityEngine.Events;
 using System.Text.RegularExpressions;
 
 public class MenuController : MonoBehaviour {
@@ -16,12 +15,6 @@ public class MenuController : MonoBehaviour {
     public Button startButton;
     public GameObject connectingText;
 
-    //Game UI
-    public GameObject gameMenuUI;
-    public GameObject damage;
-    public Text health;
-    public Text block;
-
     //Log UI
     public Text log;
 
@@ -36,6 +29,7 @@ public class MenuController : MonoBehaviour {
 
     public void connectToServer() {
         if (Application.isEditor) ipInput.text = "127.0.0.1";
+        setInteractableStart(false);
 
         if (!Regex.Match(ipInput.text, @"^\d{3}\.\d{1,3}\.\d{1,3}\.\d{1,3}").Success) {
             setLog("Ip doesn't match the format!");
@@ -44,18 +38,7 @@ public class MenuController : MonoBehaviour {
             return;
         }
 
-        setInteractableStart(false);
-
         Client.instance.connectToServer(ipInput.text, port, usernameInput.text);
-    }
-
-    public void removeMenu() {
-        hideStartMenuUI();
-        showGameUI();
-    }
-
-    public void showGameUI() {
-        gameMenuUI.SetActive(true);
     }
 
     public void hideStartMenuUI() {
@@ -92,14 +75,6 @@ public class MenuController : MonoBehaviour {
         });
     }
 
-    public void setHealth(float health) {
-        this.health.text = "Health " + health;
-    }
-
-    public void setBlock(float block) {
-        this.block.text = "Block " + block;
-    }
-
     public void clearLog() {
         log.text = "";
     }
@@ -110,14 +85,5 @@ public class MenuController : MonoBehaviour {
 
     private void OnApplicationQuit() {
         Client.instance.disconnect();
-    }
-
-    public void enableDamage() {
-        damage.SetActive(true);
-        Invoke("disableDamage", 0.3f);
-    }
-
-    private void disableDamage() {
-        damage.SetActive(false);
     }
 }
