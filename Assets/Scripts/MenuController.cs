@@ -31,7 +31,7 @@ public class MenuController : MonoBehaviour {
         if (Application.isEditor) ipInput.text = "127.0.0.1";
         setInteractableStart(false);
 
-        if (!Regex.Match(ipInput.text, @"^\d{3}\.\d{1,3}\.\d{1,3}\.\d{1,3}").Success) {
+        if (!Regex.Match(ipInput.text, @"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}").Success) {
             setLog("Ip doesn't match the format!");
             setInteractableStart(true);
             ipInput.text = "";
